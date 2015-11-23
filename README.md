@@ -32,4 +32,4 @@ it plays the .srt file from 35th minute, 25th second and 0 milliseconds with 5 s
     java subsToScreen.Main /home/user/Documents/subtitleFiles/mySrtFile.srt +05,250 00:35:25,000
 It is also legal to invert the -delay- and -start time- arguments positions.
 
-\< \>
+\< dafg \>
