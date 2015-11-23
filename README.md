@@ -25,6 +25,7 @@ it plays the .srt file from 35th minute, 25th second and 0 milliseconds.
 it plays the .srt file from the beginning with delay of 5 seconds and 250 milliseconds. With the + sign the subtitles are shifted to the right.
 
 __with three arguments__
+
     java subsToScreen.Main /home/user/Documents/subtitleFiles/mySrtFile.srt 00:35:25,000 +05,250
 it plays the .srt file from 35th minute, 25th second and 0 milliseconds with 5 seconds and 250 milliseconds delay.
 
