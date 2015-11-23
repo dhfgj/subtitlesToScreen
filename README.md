@@ -3,11 +3,11 @@ A small java program that reads .srt formatted files and draws the subtitles dir
 
 Arguments
 ---------
-The program accepts three arguments: -input file- -delay- -start point-.
-Where -input file- is necessary and is the path of the .srt file wanted to be read.
-Where -delay- is given by + or - followed by milliseconds. E.g. +02,500 gives delay of 1,5 seconds.
-Where -start point- is given in the format: hh:mm:ss,mmm. E.g. 01:32:30,000.
--delay- or -start point- or both can be omitted. 
+The program accepts three arguments: \<input file\> \<delay\> \<start point\>.
+Where \<input file\> is necessary and is the path of the .srt file wanted to be read.
+Where \<delay\> is given by + or - followed by milliseconds. E.g. +02,500 gives delay of 1,5 seconds.
+Where \<start point\> is given in the format: hh:mm:ss,mmm. E.g. 01:32:30,000.
+\<delay\> or \<start point\> or both can be omitted. 
 
 Examples
 --------
@@ -30,6 +30,4 @@ __with three arguments__
 it plays the .srt file from 35th minute, 25th second and 0 milliseconds with 5 seconds and 250 milliseconds delay.
 
     java subsToScreen.Main /home/user/Documents/subtitleFiles/mySrtFile.srt +05,250 00:35:25,000
-It is also legal to invert the -delay- and -start time- arguments positions.
-
-\< dafg \>
+It is also legal to invert the \<delay\> and \<start time\> arguments positions.
