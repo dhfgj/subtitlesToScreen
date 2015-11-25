@@ -32,8 +32,10 @@ public class Main {
 	static long difference=0;
 	static String welcomeDelay = "no";
 	static String welcomeStart = "beginning";
+	static boolean positiveDelay=false;
 
 	public void start(String filePath){
+		System.out.println("entering the start");
 //		System.out.println("this is the difference "+difference);		//debug print to see if the difference is computed correctly
 		File file = new File(filePath);
 		ArrayList arrayList;
@@ -44,19 +46,55 @@ public class Main {
 		SRT e;
 		long endTime = ((SRT) arrayList.get(0)).startTime.getTime(); //this prevents the wait before the first subtitle
 		welcomeSubtitles(5);
-		if(difference < 0)
-			d.waitFor(Math.abs(difference));
-		boolean skipSubs = true;
+		if(difference != 0 && !positiveDelay){
+			System.out.println("inside the difference != 0 && !positiveDelay");
+			System.out.println("waiting for " + difference);
+			d.waitFor(Math.abs(difference));			
+		}
+		if(!positiveDelay){
+			System.out.println("inside the !positiveDelay");
+			try {
+				System.out.println("waiting for " + (Math.abs(Math.abs(endTime)-Math.abs(SRTTimeFormat.parse(EMPTY_DATE).getTime()))));
+				System.out.println("padding date value " + (SRTTimeFormat.parse(EMPTY_DATE).getTime()));
+				System.out.println("endtime value " + (endTime));
+				d.waitFor(Math.abs(Math.abs(endTime)-Math.abs(SRTTimeFormat.parse(EMPTY_DATE).getTime())));	//the time before reaching the first subtitles has to be waited. 
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		System.out.println("Entering the first while");
 		while(it.hasNext()){
 			e=it.next();
-			long y = e.startTime.getTime();
-			if(difference>0&&skipSubs){
-				while(Math.abs(e.startTime.getTime())>difference&&Math.abs(e.endTime.getTime())>difference)
+			
+			
+			if(positiveDelay){
+				System.out.println("Entering the positiveDelay");
+				Date date = new Date (difference);		//added
+				
+				while(date.compareTo(e.startTime)>0&&date.compareTo(e.endTime)>0)
 					e=it.next();
-				skipSubs=false;
+				if(date.compareTo(e.startTime)<0){
+					System.out.println(date+" this is the difference "+difference+" And this the getTime "+date.getTime());
+					try {
+						System.out.println(SRTTimeFormat.parse("00:01:00,000")+" And this is the get time val"+SRTTimeFormat.parse("00:01:00,000").getTime());
+						System.out.println("And this is a date that gots 0 as its getTime "+new Date (0));
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					System.out.println(e.text);
+					System.out.println("The time is waiting"+(e.startTime.getTime()-date.getTime()));
+					d.waitFor(e.startTime.getTime()-date.getTime());					
+				}
+				positiveDelay=false;
 				endTime=e.startTime.getTime();
 			}
+			
+			
+			
 			long startTime = e.startTime.getTime();
+			System.out.println(e.text);
 			d.waitFor(startTime-endTime);
 			endTime = e.endTime.getTime();
 			d.assignTextToWindows(e.text, Math.abs(startTime-endTime));
@@ -86,7 +124,8 @@ public class Main {
 	private static void argumentsInstructions(){
 		System.out.println("Correct argument syntax as follows:");
 		System.out.println("<input file> <delay> <start point>");
-		System.out.println("where <delay> is given by + or - followed by milliseconds. E.g. +02,500 gives delay of 1,5 seconds");
+		System.out.println("where <delay> is given by + or - followed by milliseconds. E.g. +02,500 gives delay of 2,5 seconds:");
+		System.out.println("subtitles will be shifted to the right(postponed) by 2,5 seconds.");
 		System.out.println("where <start point> is given in the format: hh:mm:ss,mmm. E.g. 01:32:30,000");
 		System.out.println("<delay> & <start point> can be omitted");
 		System.exit(1);
@@ -118,11 +157,25 @@ public class Main {
 	private static void assignDelayAndStartTime(String args1,String args2) throws ParseException{
 		welcomeDelay=(args1==EMPTY_DELAY)?welcomeDelay:args1;
 		welcomeStart=(args2==EMPTY_DATE)?welcomeStart:args2;
-		boolean positiveDelay = (args1.charAt(0)=='-')?false:true;
+		boolean positiveDelay = (args1.charAt(0)=='-')?true:false;		//inverting true and false will result in making +delay shift subtitles to the left and not to the right
 		Date padding = SRTTimeFormat.parse(EMPTY_DATE);
 		Date startTime=SRTTimeFormat.parse(args2);
 		Date delay=SRTTimeFormat.parse("00:00:"+args1.substring(1));
-		difference = (positiveDelay)?Math.abs(startTime.getTime()+delay.getTime()-padding.getTime()):(startTime.getTime()>delay.getTime())?Math.abs(startTime.getTime()-delay.getTime()+padding.getTime()):startTime.getTime()-delay.getTime();
+		
+		System.out.println("This is the start time before processing "+startTime+" And this its getTime value "+startTime.getTime());
+		
+		if(positiveDelay){
+			difference=startTime.getTime()+delay.getTime()-padding.getTime();//to modify since it can also be a negative value 
+			Main.positiveDelay=true;
+		}
+		else if(startTime.getTime()>delay.getTime()){
+			difference= Math.abs(startTime.getTime()-delay.getTime()+padding.getTime());
+			Main.positiveDelay=true;
+		}
+		else{
+			difference=(startTime.getTime()-delay.getTime());
+		}	
+//		difference = (positiveDelay)?Math.abs(startTime.getTime()+delay.getTime()-padding.getTime()):(startTime.getTime()>delay.getTime())?Math.abs(startTime.getTime()-delay.getTime()+padding.getTime()):startTime.getTime()-delay.getTime();
 	}
 
 	public static void main(String[] args){
