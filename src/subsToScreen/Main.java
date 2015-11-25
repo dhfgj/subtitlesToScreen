@@ -126,7 +126,7 @@ public class Main {
 	private static void assignDelayAndStartTime(String args1,String args2) throws ParseException{
 		welcomeDelay=(args1==EMPTY_DELAY)?welcomeDelay:args1;
 		welcomeStart=(args2==EMPTY_DATE)?welcomeStart:args2;
-		boolean positiveDelay = (args1.charAt(0)=='-')?true:false;		//inverting true and false will result in making +delay shift subtitles to the left and not to the right
+		boolean positiveDelay = (args1.charAt(0)=='-')?false:true;		//inverting true and false will result in making +delay shift subtitles to the left and not to the right
 		Date padding = SRTTimeFormat.parse(EMPTY_DATE);					//in order to make addition and subtraction between dates correct. it removes the date overhead.
 		Date startTime=SRTTimeFormat.parse(args2);
 		Date delay=SRTTimeFormat.parse("00:00:"+args1.substring(1));		
