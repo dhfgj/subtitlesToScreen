@@ -45,10 +45,9 @@ public class Main {
 		long getTimeOfEmptyDate=0;
 		try { getTimeOfEmptyDate = SRTTimeFormat.parse(EMPTY_DATE).getTime();
 		}catch (ParseException e1) {e1.printStackTrace();}
-		
 		if(difference <getTimeOfEmptyDate)		//in the case subtitles are shifted to the right
-			d.waitFor(Math.abs(difference));			
-		if(difference <getTimeOfEmptyDate || difference ==0)
+			d.waitFor((long)((Math.abs(difference)-Math.abs(getTimeOfEmptyDate))*timeFix));			
+		if(difference <=getTimeOfEmptyDate || difference ==0)
 				d.waitFor((long) (Math.abs(Math.abs(endTime)-Math.abs(getTimeOfEmptyDate))*timeFix));	//the time before reaching the first subtitles has to be waited. 
 		displaySubtitles(it, endTime, d, getTimeOfEmptyDate);
 		d.closeAllWindows();	//releasing all resources before halting the program
@@ -131,6 +130,10 @@ public class Main {
 	public static void main(String[] args){
 		if(args.length!=1)
 			parseArguments(args);
+		else{
+			try { difference = SRTTimeFormat.parse(EMPTY_DATE).getTime();
+			}catch (ParseException e1) {e1.printStackTrace();}
+		}
 		new Main().start(args[0]);
 	}
 }
